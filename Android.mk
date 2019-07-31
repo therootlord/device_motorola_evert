@@ -31,6 +31,10 @@ include $(call all-makefiles-under,$(LOCAL_PATH))
 
 include $(CLEAR_VARS)
 
+$(shell mkdir -p $(TARGET_OUT_VENDOR)/firmware/wlan/qca_cld; \
+ln -sf /vendor/etc/wifi/WCNSS_qcom_cfg.ini \
+$(TARGET_OUT_VENDOR)/firmware/wlan/qca_cld/WCNSS_qcom_cfg.ini)
+
 $(shell mkdir -p $(TARGET_OUT_VENDOR)/firmware; \
     ln -sf /dev/block/bootdevice/by-name/msadp \
         $(TARGET_OUT_VENDOR)/firmware/msadp)

@@ -12,10 +12,19 @@ LOCAL_VENDOR_MODULE    := true
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE       := init.mmi.ramdump.rc
+LOCAL_MODULE       := init.evert.rc
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/init.mmi.ramdump.rc
+LOCAL_SRC_FILES    := etc/init.evert.rc
+LOCAL_VENDOR_MODULE    := true
+LOCAL_MODULE_RELATIVE_PATH := init/hw
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE       := init.mmi.rc
+LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES    := etc/init.mmi.rc
 LOCAL_VENDOR_MODULE    := true
 LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)
@@ -71,15 +80,6 @@ LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE       := init.power.rc
-LOCAL_MODULE_TAGS  := optional eng
-LOCAL_MODULE_CLASS := ETC
-LOCAL_SRC_FILES    := etc/init.power.rc
-LOCAL_VENDOR_MODULE    := true
-LOCAL_MODULE_RELATIVE_PATH := init/hw
-include $(BUILD_PREBUILT)
-
-include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qcom.sensors.sh
 LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := EXECUTABLES
@@ -101,6 +101,15 @@ LOCAL_MODULE_TAGS  := optional eng
 LOCAL_MODULE_CLASS := EXECUTABLES
 LOCAL_SRC_FILES    := bin/init.qti.qseecomd.sh
 LOCAL_VENDOR_MODULE    := true
+include $(BUILD_PREBUILT)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE       := init.target.rc
+LOCAL_MODULE_TAGS  := optional eng
+LOCAL_MODULE_CLASS := ETC
+LOCAL_SRC_FILES    := etc/init.target.rc
+LOCAL_VENDOR_MODULE    := true
+LOCAL_MODULE_RELATIVE_PATH := init/hw
 include $(BUILD_PREBUILT)
 
 include $(CLEAR_VARS)

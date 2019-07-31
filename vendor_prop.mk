@@ -1,5 +1,5 @@
 #
-# vendor props for sdm660
+# vendor props for evert
 #
 
 # Audio
@@ -8,7 +8,14 @@ PRODUCT_PROPERTY_OVERRIDES += \
     audio.deep_buffer.media=true \
     audio.offload.disable=false \
     audio.offload.video=false \
-    persist.audio.dualmic.config=endfire \
+    persist.vendor.audio.dualmic.config=endfire \
+    persist.vendor.audio.calfile0=/vendor/etc/acdbdata/common/Bluetooth_cal.acdb \
+    persist.vendor.audio.calfile1=/vendor/etc/acdbdata/common/General_cal.acdb \
+    persist.vendor.audio.calfile2=/vendor/etc/acdbdata/common/Global_cal.acdb \
+    persist.vendor.audio.calfile3=/vendor/etc/acdbdata/common/Handset_cal.acdb \
+    persist.vendor.audio.calfile4=/vendor/etc/acdbdata/common/Hdmi_cal.acdb \
+    persist.vendor.audio.calfile5=/vendor/etc/acdbdata/common/Headset_cal.acdb \
+    persist.vendor.audio.calfile6=/vendor/etc/acdbdata/common/Speaker_cal.acdb \
     persist.vendor.audio.fluence.audiorec=false \
     persist.vendor.audio.fluence.speaker=false \
     persist.vendor.audio.fluence.voicecall=false \
@@ -27,14 +34,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
     vendor.audio.hw.aac.encoder=true \
     vendor.audio.noisy.broadcast.delay=600 \
     vendor.audio.offload.buffer.size.kb=64 \
-    vendor.audio.offload.gapless.enabled=false \
-    vendor.audio.offload.multiaac.enable=true \
-    vendor.audio.offload.multiple.enabled=false \
-    vendor.audio.offload.passthrough=false \
-    vendor.audio.offload.pcm.16bit.enable=false \
-    vendor.audio.offload.pcm.24bit.enable=false \
-    vendor.audio.offload.pstimeout.secs=3 \
-    vendor.audio.offload.track.enable=true \
     vendor.audio.parser.ip.buffer.size=262144 \
     vendor.audio.safx.pbe.enabled=true \
     vendor.audio.tunnel.encode=false \
@@ -48,6 +47,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     bt.max.hfpclient.connections=1 \
     persist.vendor.bt.a2dp_offload_cap=sbc-aptx-aptxhd-aac \
+    persist.vendor.btstack.enable.splita2dp=false \
     vendor.qcom.bluetooth.soc=cherokee \
     vendor.bluetooth.soc=cherokee \
     ro.bluetooth.a4wp=false
@@ -69,17 +69,24 @@ PRODUCT_PROPERTY_OVERRIDES += \
 # Display
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.sf.hwc_set_default_colormode=true \
+    ro.sf.lcd_density=480 \
+    debug.gralloc.enable_fb_ubwc=1 \
     debug.sf.enable_hwc_vds=1 \
     debug.sf.hw=1 \
     debug.sf.latch_unsignaled=1 \
+    vendor.display.disable_skip_validate=1 \
     vendor.gralloc.enable_fb_ubwc=1 \
-    dev.pm.dyn_samplingrate=1 \
     ro.opengles.version=196610 \
-    ro.qualcomm.cabl=0
+    ro.qualcomm.cabl=0 \
+    ro.vendor.display.cabl=0
 
 # Factory reset partition
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.frp.pst=/dev/block/platform/soc/c0c4000.sdhci/by-name/frp
+
+# Media
+PRODUCT_PROPERTY_OVERRIDES += \
+    media.settings.xml=/vendor/etc/media_profiles.xml
 
 # NFC
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -87,7 +94,9 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Perf
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.extension_library=libqti-perfd-client.so
+    ro.vendor.at_library=libqti-at.so \
+    ro.vendor.extension_library=libqti-perfd-client.so \
+    ro.vendor.qti.sys.fw.bg_apps_limit=60
 
 # Play store
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -136,6 +145,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.data.qmi.adb_logmask=0 \
     persist.radio.adb_log_on=0 \
     persist.vendor.radio.apm_sim_not_pwdn=1 \
+    persist.vendor.radio.atfwd.start=true \
     persist.vendor.radio.custom_ecc=1 \
     persist.vendor.radio.data_con_rprt=true \
     persist.vendor.radio.add_power_save=1 \
@@ -181,17 +191,29 @@ PRODUCT_PROPERTY_OVERRIDES += \
     persist.rmnet.data.enable=true \
     persist.rmnet.mux=enabled
 
+# Sensors
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.hardware.sensors=evert \
+    ro.vendor.sensors.maghalcal=true \
+    ro.vendor.sensors.amd=false \
+    ro.vendor.sensors.pmd=false \
+    ro.vendor.sensors.rmd=false \
+    ro.vendor.sensors.facing=false \
+    ro.vendor.sensors.scrn_ortn=false \
+    ro.vendor.sensors.pedometer=false \
+    ro.vendor.sensors.dev_ori=true \
+    ro.vendor.sensors.sta_detect=true \
+    ro.vendor.sensors.mot_detect=true \
+    ro.vendor.sensors.cmc=false \
+    ro.vendor.sdk.sensors.gestures=false
+
 # Time daemon
 PRODUCT_PROPERTY_OVERRIDES += \
-    persist.vendor.delta_time.enable=true
+    persist.timed.enable=true
 
 # USB
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.sys.usb.config.extra=none
-
-# VNDK
-PRODUCT_DEFAULT_PROPERTY_OVERRIDES += \
-    ro.vndk.version=28
 
 # Voice assistant
 PRODUCT_PROPERTY_OVERRIDES += \
