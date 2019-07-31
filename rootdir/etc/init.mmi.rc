@@ -1,0 +1,346 @@
+# Moto USB configuration
+import /vendor/etc/init/hw/init.mmi.usb.rc
+
+on early-boot
+    write /sys/module/subsystem_restart/parameters/disable_restart_work 0x0
+    write /proc/sys/kernel/poweroff_cmd "/system/bin/reboot -p"
+
+on early-init
+    setprop sys.usb.controller "a800000.dwc3"
+    setprop sys.usb.configfs 1
+
+on init
+
+   # Change ownership for Dynamic-CABC feature
+   chown system system /sys/class/graphics/fb0/cabc
+   # Change ownership for for HBM feature
+   chown system system /sys/class/graphics/fb0/hbm
+
+    chown system log /sys/fs/pstore/console-ramoops-0
+    chmod 0440 /sys/fs/pstore/console-ramoops-0
+    chown system log /sys/fs/pstore/annotate-ramoops-0
+    chmod 0640 /sys/fs/pstore/annotate-ramoops-0
+    chown system log /sys/fs/pstore/dmesg-ramoops-0
+    chmod 0640 /sys/fs/pstore/dmesg-ramoops-0
+
+on fs
+    # upgrade products launched with OMR1 or before will use /persist
+    restorecon_recursive /persist
+
+on post-fs
+    # Change permission for fingerprint sensor
+    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/nav
+    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/dev_enable
+    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq
+    chown system oem_5004 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
+    chmod 0440 /sys/devices/soc/soc:fpc_fpc1020/irq_cnt
+    # MOT_LED_CALIBRATION
+    chown cameraserver /mnt/vendor/persist/camera/ledcal
+
+    mkdir /mnt/vendor/persist/camera 0755 oem_5004 oem_5004
+    mkdir /mnt/vendor/persist/camera/dualcal 0775 camera oem_5004
+    mkdir /mnt/vendor/persist/camera/focus 0775 camera oem_5004
+    mkdir /mnt/vendor/persist/camera/ledcal 0775 camera oem_5004
+    mkdir /mnt/vendor/persist/batt_health 0775 oem_5001 oem_5001
+    mkdir /mnt/vendor/persist/mdm 0770 radio radio
+    mkdir /mnt/vendor/persist/factory 0755 oem_5004 oem_5004
+    mkdir /mnt/vendor/persist/factory/audio 0755 oem_5004 system
+    mkdir /mnt/vendor/persist/factory/wlan 0755 oem_5004 oem_5004
+    mkdir /mnt/vendor/persist/factory/regulatory 0755 oem_5004 system
+    mkdir /mnt/vendor/persist/public 0755 oem_5004 oem_5004
+    mkdir /persist/public/atvc 0770 oem_5012 shell
+    mkdir /mnt/vendor/persist/public/att_dm 0775 radio oem_5004
+    mkdir /mnt/vendor/persist/public/hiddenmenu 0775 radio oem_5004
+    mkdir /mnt/vendor/persist/public/hiddenmenu/data 0775 system oem_5004
+    mkdir /persist/public/locale 0700 system system
+    mkdir /persist/public/omadm 0700 radio radio
+    mkdir /persist/public/svcs 0770 system system
+    mkdir /mnt/vendor/persist/wifi 0755 oem_5004 oem_5004
+    mkdir /mnt/vendor/persist/bt 0755 oem_5004 bluetooth
+    mkdir /mnt/vendor/persist/wmdrm 0775 oem_5003 oem_5003
+    mkdir /persist/public/usc_dm 0775 radio radio
+    mkdir /persist/sds 0700 vold vold
+    mkdir /mnt/vendor/persist/rfs/msm/mpss/mot_rfs 0771 rfs system
+
+    # This dir is used to store any OMA(both DM and CP) files in persist partition
+    # Any app with radio UID or oem_5004 GID can read/write/execute files in this dir.
+    mkdir /mnt/vendor/persist/public/oma 0775 radio oem_5004
+
+    chown oem_5004 oem_5004 /mnt/vendor/persist/factory/fti
+    chmod 0664 /mnt/vendor/persist/factory/fti
+    chown oem_5004 oem_5004 /mnt/vendor/persist/factory/byte
+    chmod 0660 /mnt/vendor/persist/factory/byte
+    chmod 0660 /mnt/vendor/persist/wifi/wlan_mac.bin
+    chown oem_5004 oem_5004 /mnt/vendor/persist/bt/bt_bdaddr
+    chmod 0664 /mnt/vendor/persist/bt/bt_bdaddr
+
+    # Set life_calls and life_timer file permissions
+    chown radio oem_5004 /mnt/vendor/persist/public/hiddenmenu/life_calls
+    chmod 0775 /mnt/vendor/persist/public/hiddenmenu/life_calls
+    chown radio oem_5004 /mnt/vendor/persist/public/hiddenmenu/life_timer
+    chmod 0775 /mnt/vendor/persist/public/hiddenmenu/life_timer
+
+    chmod 0711 /mnt/vendor/persist/rfs
+    chmod 0711 /mnt/vendor/persist/rfs/msm
+    chmod 0711 /mnt/vendor/persist/rfs/msm/mpss
+    chmod 0771 /mnt/vendor/persist/rfs/msm/mpss/mot_rfs
+
+    swapon_all /vendor/etc/fstab.qcom
+    write /proc/sys/vm/page-cluster 0 
+
+    # Set dm-verity property for system partition
+    verity_update_state
+
+    # Set capsensor calibration sysfs for MDMCTBK
+    chown radio radio /sys/class/capsense/calibrate
+    chmod 0660 /sys/class/capsense/calibrate
+
+on post-fs-data
+    # Setup folders for security
+    mkdir /mnt/vendor/persist/security 02770 drmrpc drmrpc
+    mkdir /data/vendor/dbvc 0750 oem_5004 shell
+    chown drmrpc oem_5004 /mnt/vendor/persist/security
+
+    # Setup folder for Pre-Activation Kill Switch app (PAKS)
+    mkdir /mnt/vendor/persist/paks 02770 oem_5004 oem_5004
+
+    # Create directory used by power_supply_logger
+    mkdir /data/vendor/power_supply_logger 0750 oem_5001 log
+    # Create directory power_supply_logger used by memtest and batt_health
+    mkdir /data/vendor_de/power_supply_logger 0770 root log
+
+    # Permissions for Factory Test of Charging Paths
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_auto_enable
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_ibatt
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_itrick
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_iusb
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_idc
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_usb_suspend
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_fail_clear
+    chown oem_5001 oem_5001 /sys/class/power_supply/battery/device/force_chg_usb_otg_ctl
+
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_auto_enable
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_ibatt
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_itrick
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_iusb
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_idc
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_usb_suspend
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_fail_clear
+    chown oem_5001 oem_5001 /sys/class/power_supply/mmi_battery/device/force_chg_usb_otg_ctl
+
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_start_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
+    chown root oem_5020 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
+
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_rechrg_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_attach_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_start_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_low_stop_soc
+    chmod 0664 /sys/module/qpnp_smbcharger_mmi/parameters/eb_on_sw
+
+    chown root oem_5020 /sys/class/power_supply/usb/usb_priority
+    chmod 0660 /sys/class/power_supply/usb/usb_priority
+    chown root oem_5020 /sys/module/dwc3_msm/parameters/usb_priority
+    chmod 0660 /sys/module/dwc3_msm/parameters/usb_priority
+
+    # Setup folder for native to transfer data to NativeDropBoxAgent
+    mkdir /data/vendor/dropbox-add 0730 log diag
+
+    # Create panic dump dir.
+    mkdir /data/vendor/dontpanic 0750 root log
+
+    # Create directory for cutback
+    mkdir /data/vendor/misc/cutback 0770 radio wifi
+
+    # Create directory for fm_radio
+    mkdir /data/misc/fm_radio 0770 system system
+
+    # Create bug2go folder
+    mkdir /data/vendor/bug2go 0770 log log
+
+    # Setup folder for aplogd
+    mkdir /data/vendor/aplogd 0750 log log
+
+    # Create directory used by chargeonlymode
+    mkdir /data/vendor/chargeonly 0750 root log
+
+    # Subsystem RAM-dumps
+    mkdir /data/vendor/ss-ram-dumps 0750 system log
+    mkdir /data/vendor/ss-ram-dumps/bp-dumps 0750 system log
+    mkdir /data/vendor/ss-ram-dumps/riva-dumps 0750 system log
+
+    # folder for Blueooth ramdump
+    mkdir /data/vendor/bt-ram-dumps 0750 bluetooth log
+
+    #Folder for hardware properties
+    mkdir /data/vendor/hardware_revisions 0755 system system
+
+    # Imager tuning data for camera subsystem
+    mkdir /data/vendor/misc/imager 0771 camera camera
+
+    # NFC vendor data
+    mkdir /data/vendor/nfc 0770 nfc nfc
+
+    # Required by FingerPrint Cards (FPC) via init so we don't need to give qseecomd or fingerprintd permissions to create them
+    mkdir /data/vendor/fpc 0700 system system
+    mkdir /data/vendor/.fps 0770 system fingerp
+
+on boot
+
+   # Change the ownership of display TE files for tcmds
+   chown root oem_5004 /sys/class/graphics/fb0/te_test
+   chown root oem_5004 /sys/class/graphics/fb0/te_enable
+   chown root oem_5004 /sys/class/graphics/fb0/frame_counter
+   # Wifi firmware reload path
+   chown wifi wifi /sys/module/wlan/parameters/fwpath
+   # capsensor fw path
+   chmod 0666 /sys/class/capsense/fw_download_status
+   chown system system /sys/class/capsense/reset
+   chmod 0660 /sys/class/capsense/reset
+   chown system system /sys/class/capsense/set_threshold
+   chmod 0660 /sys/class/capsense/set_threshold
+
+   # restore default console_loglevel to KERN_DEBUG
+   # restore default_message_loglevel to KERN_WARNING
+   write /proc/sys/kernel/printk "7 4 1 7"
+
+    # MOTO, NJH348, IKHALFMWK-1864, change system max tcp buffer sizes based on RAT changes
+    # Define system changable TCP buffer max values
+    chown system system /proc/sys/net/core/rmem_max
+    chown system system /proc/sys/net/core/wmem_max
+
+ # Change ownership and permission for leds backlight
+   chmod 0664 /sys/class/leds/lcd-backlight/brightness
+   chown system system /sys/class/leds/charging/brightness
+   chmod 0664 /sys/class/leds/charging/brightness
+
+   # change permission of red leds
+   chown system system /sys/class/leds/red/brightness
+   chmod 0664 /sys/class/leds/red/brightness
+
+   # Change ownership and permission for vibrator
+   chown system system /sys/class/timed_output/vibrator/enable
+   chmod 0660 /sys/class/timed_output/vibrator/enable
+   chown system system /sys/class/leds/vibrator/state
+   chmod 0660 /sys/class/leds/vibrator/state
+   chown system system /sys/class/leds/vibrator/activate
+   chmod 0660 /sys/class/leds/vibrator/activate
+   chown system system /sys/class/leds/vibrator/duration
+   chmod 0660 /sys/class/leds/vibrator/duration
+   chown root oem_5020 /sys/bus/i2c/devices/2-005a/reduce
+
+   # Change ownership of aov related sysfs entries
+   chown audio audio /sys/kernel/aov/trigger
+   chown audio audio /sys/kernel/aov/register
+   chown audio audio /sys/kernel/aov/event
+
+   # Quiet binder logs
+   write /sys/module/binder/parameters/debug_mask 0x5
+
+   # Clear cooldown state
+   mkdir /mnt/vendor/persist/chargeonly 0770 system system
+   write /mnt/vendor/persist/chargeonly/cooldown n
+   chown system system /mnt/vendor/persist/chargeonly/cooldown
+   chmod 0660 /mnt/vendor/persist/chargeonly/cooldown
+
+on charger
+    trigger early-fs
+    trigger fs
+    trigger post-fs
+    trigger late-fs
+    trigger post-fs-data
+    trigger moto-charger
+    class_stop main
+    class_stop late_start
+
+# translate to qcom property name in order to keep the consistent with
+# our legacy property
+on property:persist.vendor.qc.sub.rdump.on=*
+    setprop persist.vendor.ssr.enable_ramdumps ${persist.vendor.qc.sub.rdump.on}
+
+service capsense_reset /system/vendor/bin/capsense_reset
+	class core
+	user system
+	group system
+	disabled
+
+service capsense_set_threshold /system/vendor/bin/capsense_set_threshold
+	class core
+	user system
+	group system
+	disabled
+	oneshot
+
+on property:sys.boot_completed=1
+  start capsense_reset
+  start capsense_set_threshold
+
+service vendor.mbm_spy /vendor/bin/mbm_spy
+    class late_start
+    user system
+    group system
+    oneshot
+
+service vendor.charge_only_mode /vendor/bin/charge_only_mode
+    user root
+    group graphics system input
+    disabled
+
+service vendor.thermal-com /vendor/bin/thermal-engine --minimode
+    class main
+    user root
+    disabled
+
+on moto-charger
+    setprop ro.board.platform msm8998
+    load_system_props
+    trigger firmware_mounts_complete
+    setprop sys.usb.config charging
+    start  qcom-post-boot
+    start vendor.gbmodinstall
+    start vendor.charge_only_mode
+    start vendor.batt_health
+    start vendor.thermal-com
+
+service vendor.adspd /vendor/bin/adspd
+   class main
+   socket adspdsock stream 0660 system audio
+   user audio
+   group audio input diag
+
+# bugreport is triggered by holding down volume down, volume up and power
+service bugreport /system/bin/dumpstate -d -p -B -z \
+        -o /data/user_de/0/com.android.shell/files/bugreports/bugreport
+    class main
+    disabled
+    oneshot
+    keycodes 114 115 116
+
+
+on property:vendor.wifi.tethering=false
+    write /sys/module/wlan/parameters/sar_mhs disabled
+
+on property:vendor.wifi.tethering=true
+    write /sys/module/wlan/parameters/sar_mhs enabled
+
+# Override the AOSP sensor HAL service definition to add input group access
+service vendor.sensors-hal-1-0 /vendor/bin/hw/android.hardware.sensors@1.0-service
+    class hal
+    user system
+    group system input wakelock
+    capabilities BLOCK_SUSPEND
+    rlimit rtprio 10 10
+
+#Override fwpath string when wpa_supplicant server was killed
+on property:vendor.wifi.station=true
+    write /sys/module/wlan/parameters/sar_sta enabled
+
+on property:vendor.wifi.station=false
+    write /sys/module/wlan/parameters/sar_sta disabled
+
