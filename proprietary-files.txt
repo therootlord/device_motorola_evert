@@ -681,7 +681,7 @@ vendor/lib64/libqmi_encdec.so
 vendor/lib64/libquipc_os_api.so
 
 # Radio
--app/datastatusnotification/datastatusnotification.apk
+-app/datastatusnotification/datastatusnotification.apk|9e21f9a695951c3bc9ef39fcd4e73ec58b13415c
 -app/embms/embms.apk
 -app/QtiTelephonyService/QtiTelephonyService.apk
 etc/permissions/embms.xml
@@ -689,7 +689,7 @@ etc/permissions/qcrilhook.xml
 etc/permissions/telephonyservice.xml
 framework/embmslibrary.jar
 -framework/qcrilhook.jar
-framework/qti-telephony-common.jar
+framework/qti-telephony-common.jar|e529711775c31da38c9ecd1ab94b27ee15570dc4
 framework/QtiTelephonyServicelibrary.jar
 lib/vendor.qti.hardware.radio.am@1.0.so
 lib/vendor.qti.hardware.radio.ims@1.0.so
@@ -720,7 +720,7 @@ lib64/vendor.qti.hardware.radio.uim_remote_client@1.0.so
 lib64/vendor.qti.hardware.radio.uim_remote_server@1.0.so
 lib64/vendor.qti.hardware.radio.uim@1.0.so
 lib64/vendor.qti.hardware.radio.uim@1.1.so
--priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk
+-priv-app/qcrilmsgtunnel/qcrilmsgtunnel.apk|d1d3adfe6eff32a3013e146317324029181e3c4a
 vendor/bin/ATFWD-daemon
 vendor/bin/ipacm-diag
 vendor/bin/netmgrd
@@ -854,7 +854,7 @@ lib64/librcc.so
 lib64/vendor.qti.ims.callinfo@1.0.so
 lib64/vendor.qti.ims.rcsconfig@1.0.so
 lib64/vendor.qti.imsrtpservice@1.0.so
--priv-app/ims/ims.apk
+-priv-app/ims/ims.apk|d6e133dcd005202792e673f3439134a4f8b3b8ed
 vendor/bin/imsdatadaemon
 vendor/bin/imsqmidaemon
 vendor/bin/imsrcsd
