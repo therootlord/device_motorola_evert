@@ -259,6 +259,10 @@
          and the screen off animation has been performed. -->
     <bool name="config_dozeAfterScreenOffByDefault">true</bool>
 
+    <!-- The sensor id of an "any motion" sensor used in auto-power save modes.
+         0 indicates this sensor is not available. -->
+    <integer name="config_autoPowerModeAnyMotionSensor">30</integer>
+
     <!-- Specifies whether to decouple the interactive state of the device from the display on/off state. -->
     <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
 
